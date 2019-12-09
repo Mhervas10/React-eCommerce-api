@@ -7,11 +7,12 @@ const ProductContext = React.createContext();
 
 class ProductProvider extends Component {
 state = {
+    fetchedProducts: [],
     products: [],
     detailProduct: detailProduct,
-    cart: [],
+    cart: new Map(),
     modalOpen:false,
-    modalProduct:detailProduct,
+    modalProduct: detailProduct,
     cartSubTotal:0,
     cartTax:0,
     cartTotal:0
@@ -19,14 +20,39 @@ state = {
 componentDidMount(){
     this.setProducts();
 }
-setProducts = () =>{
+setProducts = async () => {
+    // TODO: Fetch products from API
+
+    const pageSize = 6
+    const pageIndex = 0
+    const pageOffset = pageIndex * pageSize
+
+    const url = `https://api.musement.com/api/v3/venues/164/activities?limit=${pageSize}&offset=${pageOffset}`
+
+    let fetchedProducts = await fetch(url, {
+        headers: {
+            'Content-Type': 'application/json',
+            'accept-language': 'it',
+            'x-musement-currency': 'EUR',
+            'x-musement-version': '3.4.0',
+        }
+    })
+
+    fetchedProducts = await fetchedProducts.json()
+
+    // TODO: Save fetched products into `products`
+
     let tempProducts = [];
     storeProducts.forEach(item =>{
         const singleItem = {...item};
         tempProducts = [...tempProducts, singleItem];
     })
-    this.setState(()=>{
-        return {products:tempProducts};
+
+    this.setState(() =>{
+        return {
+            products:tempProducts,
+            fetchedProducts,
+        };
     })
 }
 
@@ -41,20 +67,32 @@ handleDetail = (id) => {
         return {detailProduct:product}
     })
 }
-addToCart = (id) => {
-    let tempProducts = [...this.state.products];
-    const index = tempProducts.indexOf(this.getItem(id));
-    const product = tempProducts[index];
-    product.inCart = true;
-    product.count = 1;
-    const price = product.price;
-    product.total = price;
-this.setState(()=>{
-    return{ products: tempProducts, cart:[...this.state.cart, product] };
-},
-()=>{
-    this.addTotals();
-})
+
+addToCart = (product) => {
+    const count = this.state.cart.get(product)
+    const cart = this.state.cart.set(product, count ? count + 1 : 1)
+
+    this.setState(() => ({ cart }))
+
+    // let tempProducts = [...this.state.products];
+    // const index = tempProducts.indexOf(this.getItem(id));
+    // const product = tempProducts[index];
+    // product.inCart = true;
+    // product.count = 1;
+    // const price = product.price;
+    // product.total = price;
+
+    // this.setState(
+    //     () => ({ products: tempProducts, cart: [...this.state.cart, product] }),
+    //     () => this.addTotals(),
+    // )
+
+// this.setState(()=>{
+//     return{ products: tempProducts, cart:[...this.state.cart, product] };
+// },
+// ()=>{
+//     this.addTotals();
+// })
 }
 openModal = id =>{
     const product = this.getItem(id);
@@ -67,34 +105,49 @@ closeModal = () =>{
         return {modalOpen:false}
     })
 }
-increment = (id) =>{
-    let tempCart = [...this.state.cart];
-    const selectedProduct = tempCart.find(item=>item.id === id)
+increment = (product) =>{
+    const count = this.state.cart.get(product)
+    const cart = this.state.cart.set(product, count + 1)
 
-    const index = tempCart.indexOf(selectedProduct);
-    const product = tempCart[index];
+    this.setState(() => ({ cart }))
 
-    product.count = product.count + 1;
-    product.total = product.count * product.price;
+    // let tempCart = [...this.state.cart];
+    // const selectedProduct = tempCart.find(item=>item.id === id)
 
-    this.setState(()=>{return{cart:[...tempCart]}},()=>{this.addTotals()})
-    
+    // const index = tempCart.indexOf(selectedProduct);
+    // const product = tempCart[index];
+
+    // product.count = product.count + 1;
+    // product.total = product.count * product.price;
+
+    // this.setState(()=>{return{cart:[...tempCart]}},()=>{this.addTotals()})
+
 }
-decrement = (id) =>{
-    let tempCart = [...this.state.cart];
-    const selectedProduct = tempCart.find(item=>item.id === id)
+decrement = (product) => {
+    const count = this.state.cart.get(product)
+    const cart = this.state.cart.set(product, count - 1)
 
-    const index = tempCart.indexOf(selectedProduct);
-    const product = tempCart[index];
+    this.setState(() => ({ cart }))
 
-    product.count = product.count -1;
-    if(product.count === 0){
-        this.removeItem(id)
-    }else{
-        product.total = product.count * product.price;
-        this.setState(()=>{return{cart:[...tempCart]}},()=>{this.addTotals()});
+    if (count < 1) {
+        this.removeItem(product)
     }
-    
+
+
+    // let tempCart = [...this.state.cart];
+    // const selectedProduct = tempCart.find(item=>item.id === id)
+
+    // const index = tempCart.indexOf(selectedProduct);
+    // const product = tempCart[index];
+
+    // product.count = product.count -1;
+    // if(product.count === 0){
+    //     this.removeItem(id)
+    // }else{
+    //     product.total = product.count * product.price;
+    //     this.setState(()=>{return{cart:[...tempCart]}},()=>{this.addTotals()});
+    // }
+
 }
 removeItem = (id)=>{
     let tempProducts = [...this.state.products];
@@ -143,15 +196,15 @@ addTotals = () =>{
     render() {
         return (
             <ProductContext.Provider value={{
-            ...this.state,
-            handleDetail:this.handleDetail,
-            addToCart:this.addToCart,
-            openModal:this.openModal,
-            closeModal:this.closeModal,
-            increment:this.increment,
-            decrement:this.decrement,
-            removeItem:this.removeItem,
-            clearCart:this.clearCart
+                ...this.state,
+                handleDetail: this.handleDetail,
+                addToCart: this.addToCart,
+                openModal: this.openModal,
+                closeModal: this.closeModal,
+                increment: this.increment,
+                decrement: this.decrement,
+                removeItem: this.removeItem,
+                clearCart: this.clearCart,
             }}>
                 {this.props.children}
             </ProductContext.Provider>
