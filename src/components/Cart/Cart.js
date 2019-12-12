@@ -13,7 +13,7 @@ export default class Cart extends Component {
                 <ProductConsumer>
                     {value =>{
                         const {cart} =value;
-                        if(cart.length>0){
+                        if(cart){
                             return(
                                 <React.Fragment>
                                 <Title name="your" title="cart">
@@ -34,7 +34,7 @@ export default class Cart extends Component {
                         }
                     }}
                 </ProductConsumer>
-                
+
             </section>
         )
     }
