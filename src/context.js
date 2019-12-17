@@ -105,7 +105,7 @@ closeModal = () =>{
         return {modalOpen:false}
     })
 }
-increment = (product) =>{
+increment = (product) => {
     const count = this.state.cart.get(product)
     const cart = this.state.cart.set(product, count + 1)
 
@@ -149,27 +149,31 @@ decrement = (product) => {
     // }
 
 }
-removeItem = (id)=>{
-    let tempProducts = [...this.state.products];
-    let tempCart = [...this.state.cart];
+removeItem = (id) => {
+    const cart = this.state.cart
+    cart.delete(id)
 
-tempCart = tempCart.filter(item => item.id !== id)
-;
-const index = tempProducts.indexOf(this.getItem(id));
-let removedProduct = tempProducts[index];
-removedProduct.inCart = false;
-removedProduct.count = 0;
-removedProduct.total = 0;
+    this.setState(() => ({ cart }))
 
-this.setState(()=>{
-    return{
-        cart:[...tempCart],
-        products:[...tempProducts]
-    }
-},
-()=>{
-    this.addTotals();
-})
+    // let tempProducts = [...this.state.products];
+    // let tempCart = [...this.state.cart];
+    // tempCart = tempCart.filter(item => item.id !== id);
+
+    // const index = tempProducts.indexOf(this.getItem(id));
+    // let removedProduct = tempProducts[index];
+    // removedProduct.inCart = false;
+    // removedProduct.count = 0;
+    // removedProduct.total = 0;
+
+    // this.setState(()=>{
+    //     return {
+    //         cart:[...tempCart],
+    //         products:[...tempProducts]
+    //     }
+    // },
+    // ()=>{
+    //     this.addTotals();
+    // })
 }
 clearCart = ()=>{
     this.setState(()=>{

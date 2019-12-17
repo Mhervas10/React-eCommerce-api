@@ -4,7 +4,7 @@ const CartItem = ({item, value, count}) => {
     // const {id,title,img,price,total,count} = item
     const {increment,decrement,removeItem} = value
     const {
-        uuid: id,
+        // uuid: id,
         title,
         cover_image_url: img,
         retail_price: { value: price = 210 },
