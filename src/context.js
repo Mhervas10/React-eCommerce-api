@@ -13,15 +13,16 @@ state = {
         subTotal: 0,
         tax: 0,
         total: 0,
+        items: 0,
+        uniqueItems: 0,
     },
 
-    products: [],
     detailProduct: detailProduct,
 
-
-    modalOpen:false,
+    modalOpen: false,
     modalProduct: detailProduct,
 
+    products: [],
     cartSubTotal:0,
     cartTax:0,
     cartTotal:0
@@ -215,14 +216,23 @@ clearCart = () => {
     // });
 }
 addTotals = () => {
-    const subTotal = Array.from(this.state.cart.entries())
+    const cartEntries = Array.from(this.state.cart.entries())
+
+    const subTotal = cartEntries
         .map(([item, count]) => item.retail_price.value * count)
         .reduce((acc, val) => acc + val)
-
     const tax = subTotal * 0.21
     const total = subTotal + tax
 
-    this.setState(() => ({ totals: { subTotal, tax, total } }))
+    const items = cartEntries
+        .map(([item, count]) => count)
+        .reduce((acc, val) => acc + val)
+    const uniqueItems = cartEntries.length
+
+    this.setState(() => ({ totals: {
+        subTotal, tax, total,
+        items, uniqueItems,
+    } }))
 
     // let subTotal = 0;
     // this.state.cart.map(item =>(subTotal += item.total));
