@@ -26,9 +26,9 @@ export default class Navbar extends Component {
                 </ul>
                 <Link to='/cart' className="ml-auto">
                     <ButtonContainer>
-                        <ProductConsumer>{(value) => value.totals.items}</ProductConsumer>
-                        <i className="mr-2 fas fa-cart-plus"></i>
-                        <ProductConsumer>{(value) => value.totals.total}</ProductConsumer>€
+                        <ProductConsumer>{({ totals }) => totals.items}</ProductConsumer>:
+                        <i className="mx-2 fas fa-cart-plus"></i>
+                        <ProductConsumer>{({ totals, formatPrice }) => formatPrice(totals.total / 100)}</ProductConsumer>
                     </ButtonContainer>
                 </Link>
             </NavWrapper>

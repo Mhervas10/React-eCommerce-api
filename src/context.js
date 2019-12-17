@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {storeProducts, detailProduct} from './data';
+import {detailProduct} from './data';
 
 const ProductContext = React.createContext();
 //Provider
@@ -22,14 +22,21 @@ state = {
     modalOpen: false,
     modalProduct: detailProduct,
 
-    products: [],
-    cartSubTotal:0,
-    cartTax:0,
-    cartTotal:0
+    // products: [],
+    // cartSubTotal:0,
+    // cartTax:0,
+    // cartTotal:0
 }
 componentDidMount(){
     this.setProducts();
 }
+
+formatPrice = (price, count = 1) => {
+    const formatArgs = [navigator.language, { style: 'currency', currency: 'EUR' }]
+    const formattedPrice = (((price.toFixed(2) * 100)|0) * count / 100).toFixed(2)
+    return new Intl.NumberFormat(...formatArgs).format(formattedPrice)
+}
+
 setProducts = async () => {
     // TODO: Fetch products from API
 
@@ -52,23 +59,23 @@ setProducts = async () => {
 
     // TODO: Save fetched products into `products`
 
-    let tempProducts = [];
-    storeProducts.forEach(item =>{
-        const singleItem = {...item};
-        tempProducts = [...tempProducts, singleItem];
-    })
+    // let tempProducts = [];
+    // storeProducts.forEach(item =>{
+    //     const singleItem = {...item};
+    //     tempProducts = [...tempProducts, singleItem];
+    // })
 
     this.setState(() =>{
         return {
-            products:tempProducts,
+            // products:tempProducts,
             fetchedProducts,
         };
     })
 }
 
 getItem = (id) => {
-    const product = this.state.products.find(item => item.id === id);
-    return product;
+    // const product = this.state.products.find(item => item.id === id);
+    // return product;
 }
 
 handleDetail = (id) => {
@@ -219,7 +226,7 @@ addTotals = () => {
     const cartEntries = Array.from(this.state.cart.entries())
 
     const subTotal = cartEntries
-        .map(([item, count]) => item.retail_price.value * count)
+        .map(([item, count]) => ((item.retail_price.value.toFixed(2) * 100)|0) * count)
         .reduce((acc, val) => acc + val, 0)
     const tax = subTotal * 0.21
     const total = subTotal + tax
@@ -249,6 +256,7 @@ addTotals = () => {
     //     }
     // })
 }
+
     render() {
         return (
             <ProductContext.Provider value={{
@@ -261,6 +269,7 @@ addTotals = () => {
                 decrement: this.decrement,
                 removeItem: this.removeItem,
                 clearCart: this.clearCart,
+                formatPrice: this.formatPrice,
             }}>
                 {this.props.children}
             </ProductContext.Provider>
