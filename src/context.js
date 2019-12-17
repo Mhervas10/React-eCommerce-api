@@ -220,13 +220,13 @@ addTotals = () => {
 
     const subTotal = cartEntries
         .map(([item, count]) => item.retail_price.value * count)
-        .reduce((acc, val) => acc + val)
+        .reduce((acc, val) => acc + val, 0)
     const tax = subTotal * 0.21
     const total = subTotal + tax
 
     const items = cartEntries
         .map(([item, count]) => count)
-        .reduce((acc, val) => acc + val)
+        .reduce((acc, val) => acc + val, 0)
     const uniqueItems = cartEntries.length
 
     this.setState(() => ({ totals: {
