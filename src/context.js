@@ -175,13 +175,18 @@ removeItem = (id) => {
     //     this.addTotals();
     // })
 }
-clearCart = ()=>{
-    this.setState(()=>{
-        return {cart:[]};
-    },()=>{
-        this.setProducts();
-        this.addTotals();
-    });
+clearCart = () => {
+    const cart = this.state.cart
+    cart.clear()
+
+    this.setState(() => ({ cart }))
+
+    // this.setState(()=>{
+    //     return {cart:[]};
+    // },()=>{
+    //     this.setProducts();
+    //     this.addTotals();
+    // });
 }
 addTotals = () =>{
     let subTotal = 0;
