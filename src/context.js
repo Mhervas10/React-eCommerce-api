@@ -7,6 +7,8 @@ const ProductContext = React.createContext();
 
 class ProductProvider extends Component {
 state = {
+    pageSize: 6,
+    pageIndex: 0,
     fetchedProducts: [],
     cart: new Map(),
     totals: {
@@ -38,10 +40,8 @@ formatPrice = (price, count = 1) => {
 }
 
 setProducts = async () => {
-    // TODO: Fetch products from API
-
-    const pageSize = 6
-    const pageIndex = 0
+    const pageSize = this.state.pageSize
+    const pageIndex = this.state.pageIndex
     const pageOffset = pageIndex * pageSize
 
     const url = `https://api.musement.com/api/v3/venues/164/activities?limit=${pageSize}&offset=${pageOffset}`
@@ -71,6 +71,14 @@ setProducts = async () => {
             fetchedProducts,
         };
     })
+}
+changePage = (pageIndex, pageSize) => {
+    const newPageSize = pageSize || this.state.pageSize
+
+    this.setState(
+        () => ({ pageIndex, pageSize: newPageSize }),
+        () => this.setProducts(),
+    )
 }
 
 getItem = (id) => {
@@ -270,6 +278,7 @@ addTotals = () => {
                 removeItem: this.removeItem,
                 clearCart: this.clearCart,
                 formatPrice: this.formatPrice,
+                changePage: this.changePage,
             }}>
                 {this.props.children}
             </ProductContext.Provider>
