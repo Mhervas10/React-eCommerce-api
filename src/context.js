@@ -8,11 +8,20 @@ const ProductContext = React.createContext();
 class ProductProvider extends Component {
 state = {
     fetchedProducts: [],
+    cart: new Map(),
+    totals: {
+        subTotal: 0,
+        tax: 0,
+        total: 0,
+    },
+
     products: [],
     detailProduct: detailProduct,
-    cart: new Map(),
+
+
     modalOpen:false,
     modalProduct: detailProduct,
+
     cartSubTotal:0,
     cartTax:0,
     cartTotal:0
@@ -72,7 +81,10 @@ addToCart = (product) => {
     const count = this.state.cart.get(product)
     const cart = this.state.cart.set(product, count ? count + 1 : 1)
 
-    this.setState(() => ({ cart }))
+    this.setState(
+        () => ({ cart }),
+        () => this.addTotals(),
+    )
 
     // let tempProducts = [...this.state.products];
     // const index = tempProducts.indexOf(this.getItem(id));
@@ -94,6 +106,7 @@ addToCart = (product) => {
 //     this.addTotals();
 // })
 }
+
 openModal = id =>{
     const product = this.getItem(id);
     this.setState(()=>{
@@ -105,11 +118,15 @@ closeModal = () =>{
         return {modalOpen:false}
     })
 }
+
 increment = (product) => {
     const count = this.state.cart.get(product)
     const cart = this.state.cart.set(product, count + 1)
 
-    this.setState(() => ({ cart }))
+    this.setState(
+        () => ({ cart }),
+        () => this.addTotals(),
+    )
 
     // let tempCart = [...this.state.cart];
     // const selectedProduct = tempCart.find(item=>item.id === id)
@@ -127,7 +144,10 @@ decrement = (product) => {
     const count = this.state.cart.get(product)
     const cart = this.state.cart.set(product, count - 1)
 
-    this.setState(() => ({ cart }))
+    this.setState(
+        () => ({ cart }),
+        () => this.addTotals(),
+    )
 
     if (count < 1) {
         this.removeItem(product)
@@ -153,7 +173,10 @@ removeItem = (id) => {
     const cart = this.state.cart
     cart.delete(id)
 
-    this.setState(() => ({ cart }))
+    this.setState(
+        () => ({ cart }),
+        () => this.addTotals(),
+    )
 
     // let tempProducts = [...this.state.products];
     // let tempCart = [...this.state.cart];
@@ -179,7 +202,10 @@ clearCart = () => {
     const cart = this.state.cart
     cart.clear()
 
-    this.setState(() => ({ cart }))
+    this.setState(
+        () => ({ cart }),
+        () => this.addTotals(),
+    )
 
     // this.setState(()=>{
     //     return {cart:[]};
@@ -188,19 +214,30 @@ clearCart = () => {
     //     this.addTotals();
     // });
 }
-addTotals = () =>{
-    let subTotal = 0;
-    this.state.cart.map(item =>(subTotal += item.total));
-    const tempTax = subTotal * 0.1;
-    const tax = parseFloat(tempTax.toFixed(2));
+addTotals = () => {
+    const subTotal = Array.from(this.state.cart.entries())
+        .map(([item, count]) => item.retail_price.value * count)
+        .reduce((acc, val) => acc + val)
+
+    const tax = subTotal * 0.21
     const total = subTotal + tax
-    this.setState(()=>{
-        return{
-            cartSubTotal:subTotal,
-            cartTax:tax,
-            cartTotal:total
-        }
-    })
+
+    this.setState(() => ({ totals: { subTotal, tax, total } }))
+
+    // let subTotal = 0;
+    // this.state.cart.map(item =>(subTotal += item.total));
+
+    // const tempTax = subTotal * 0.1;
+    // const tax = parseFloat(tempTax.toFixed(2));
+    // const total = subTotal + tax
+
+    // this.setState(() => {
+    //     return {
+    //         cartSubTotal: subTotal,
+    //         cartTax: tax,
+    //         cartTotal: total,
+    //     }
+    // })
 }
     render() {
         return (

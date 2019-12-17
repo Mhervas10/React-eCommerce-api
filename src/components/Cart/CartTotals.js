@@ -2,7 +2,7 @@ import React from 'react';
 import {Link} from 'react-router-dom'
 
 const CartTotals = ({value}) => {
-    const{cartSubTotal,cartTax,cartTotal,clearCart} = value;
+    const { totals, clearCart } = value;
     return (
         <React.Fragment>
             <div className="container">
@@ -15,15 +15,15 @@ const CartTotals = ({value}) => {
                         </Link>
                         <h5><span className="text-title">
                             subtotal :</span>
-                            <strong>{cartSubTotal}€</strong>
+                            <strong>{totals.subTotal}€</strong>
                         </h5>
                         <h5><span className="text-title">
                             tax :</span>
-                            <strong>{cartTax}€</strong>
+                            <strong>{totals.tax}€</strong>
                         </h5>
                         <h5><span className="text-title">
                             total :</span>
-                            <strong>{cartTotal}€</strong>
+                            <strong>{totals.total}€</strong>
                         </h5>
                     </div>
                 </div>
