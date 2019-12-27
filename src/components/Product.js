@@ -6,20 +6,21 @@ import PropTypes from 'prop-types'
 
 export default class Product extends Component {
     render() {
+        const { product, formatPrice } = this.props
         const {
             uuid: id,
             title,
             cover_image_url: img,
             retail_price: { value: price = 210 },
             // inCart = false
-        } = this.props.product;
+        } = product;
 
         return (
-            <ProductWrapper className="col-9 col-md-6 col-lg-4 my-3">
+            <ProductWrapper className="my-3 col-9 col-md-6 col-lg-4">
                 <div className="card">
                     <ProductConsumer>
                     {(value)=>(
-                    <div className="img-container p-5"
+                    <div className="p-5 img-container"
                         onClick={()=>
                             value.handleDetail(id)
                         }>
@@ -27,7 +28,7 @@ export default class Product extends Component {
                                 <img src={img} alt="product" className="card-img-top"/>
                             </Link>
                             <button className="cart-btn" onClick={()=>{
-                            value.addToCart(this.props.product);
+                            value.addToCart(product);
                             // value.openModal(id);
                         }}>
                             <i className="fas fa-cart-plus"></i>
@@ -37,12 +38,11 @@ export default class Product extends Component {
                     </ProductConsumer>
                     {/* card footer */}
                     <div className="card-footer d-flex justify-content-between">
-                        <p className="align-self-center mb-0">
+                        <p className="mb-0 align-self-center">
                             {title}
                         </p>
-                        <h5 className="text-blue font-italic mb-0">
-                        {price}
-                            <span className="mr-1">€</span>
+                        <h5 className="mb-0 text-blue font-italic">
+                            {formatPrice(price)}
                         </h5>
                     </div>
                 </div>

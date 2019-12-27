@@ -12,18 +12,14 @@ export default class Cart extends Component {
             <section>
                 <ProductConsumer>
                     {value =>{
-                        const {cart} =value;
+                        const { cart, formatPrice } =value;
                         if(cart){
                             return(
                                 <React.Fragment>
-                                <Title name="your" title="cart">
-                                </Title>
-                                <CartColumns>
-                                </CartColumns>
-                                <CartList value={value}>
-                                </CartList>
-                                <CartTotals value={value}>
-                                </CartTotals>
+                                    <Title name="your" title="cart"></Title>
+                                    <CartColumns></CartColumns>
+                                    <CartList value={value}></CartList>
+                                    <CartTotals value={value} formatPrice={formatPrice}></CartTotals>
                                 </React.Fragment>
                             );
                         }

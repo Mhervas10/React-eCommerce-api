@@ -4,7 +4,6 @@ import Title from './Title';
 import {ProductConsumer} from '../context';
 
 export default class ProductList extends Component {
-
     render() {
         return (
             <React.Fragment>
@@ -12,13 +11,23 @@ export default class ProductList extends Component {
                     <div className="container">
                         <Title name="our" title="products"></Title>
                         <div className="row">
-                        <ProductConsumer>
-                            {value=>{
-                                return value.fetchedProducts.map((product, index) =>{
-                                    return <Product key={index} product={product} />
-                                })
-                            }}
-                        </ProductConsumer>
+                            <ProductConsumer>
+                                {value => value.fetchedProducts.map((product, index) =>{
+                                    return <Product key={index} product={product} formatPrice={value.formatPrice} />
+                                })}
+                            </ProductConsumer>
+                            <ProductConsumer>
+                                {({ changePage, pageIndex }) => <button onClick={() => changePage(--pageIndex)}>Prev Page</button>}
+                            </ProductConsumer>
+                            <ProductConsumer>
+                                {({ changePage, pageIndex, pageSize }) => {
+                                    return <input type="number" min="6" max="72" step="6" value={pageSize}
+                                        onChange={(event) => changePage(pageIndex, event.target.value)} />
+                                }}
+                            </ProductConsumer>
+                            <ProductConsumer>
+                                {({ changePage, pageIndex }) => <button onClick={() => changePage(++pageIndex)}>Next Page</button>}
+                            </ProductConsumer>
                         </div>
                     </div>
                 </div>
